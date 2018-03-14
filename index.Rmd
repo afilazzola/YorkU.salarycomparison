@@ -1,0 +1,44 @@
+---
+title: 'YorkU Salary Comparison'
+author: "Alex Filazzola"
+date: "May 2017"
+output:
+  html_document:
+    theme: yeti
+    toc: yes
+    toc_float: yes
+    toc_depth: 3
+  
+---
+
+
+
+### load data and libraries
+```{r}
+## load libraries
+library(tidyverse)
+library(readr)
+library(ggthemes)
+source("functions.R")
+
+dat2012 <- read.csv("Data//2012.csv")
+dat2013 <- read.csv("Data//2013.csv")
+dat2014 <- read.csv("Data//2014.csv")
+dat2015 <- read.csv("Data//2015.csv")
+dat2016 <- read.csv("Data//2016.csv")
+
+data <- rbind(dat2012,dat2013, dat2014, dat2015, dat2016) 
+
+data[,"Salary.Paid"] <- parse_number(data$Salary.Paid) ## convert dollarsigns to numbers
+data[,"Calendar.Year"] <- as.factor(data$Calendar.Year) ## convert year to a factor
+```
+
+### Average Salary last 5 years
+```{r}
+
+mean.paid <- data %>% group_by(Calendar.Year) %>% summarize(salary=mean(Salary.Paid))
+
+ggplot(data=mean.paid, aes(x=Calendar.Year, y=salary)) + geom_point() +  stat_smooth(method="lm", formula= y~x,aes(x=Calendar.Year, y=salary), color="#56B4E9", fill="#56B4E970")
+
+
+data[grep("Professor", data$Job.Title), ]
