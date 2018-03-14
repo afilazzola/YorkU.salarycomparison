@@ -11,6 +11,8 @@ output:
   
 ---
 
+![](york.jpg)
+
 In an attempt to correct some of York University's portrayal of the CUPE3903 members as having unrealistic expectations in barganing (see this [Memorandum](http://labour.yorku.ca/2018/03/13/memorandum-on-a-path-forward/?_cldee=YWxleC5maWxhenpvbGFAb3V0bG9vay5jb20%3d&recipientid=contact-980019b7e0bf4db3839e35db6b331eba-e704eb4fb4504d9186714c072cbdd1de&esid=eec02e81-f926-e811-8def-000c29b184c1)), I thought it would be a good opportunity to review the prioritization of funding. More specifically, the salaries of employees on the [Sunshine List](https://www.ontario.ca/page/public-sector-salary-disclosure) and other relevant statistics. I know that this strike is about significantly more than a wage increase. If you think otherwise, I would encourage you to read the Union's priorities in bargaining [Bargaining proposals](https://3903.cupe.ca/bargaining/). However, I thought I would offer a small rebuttle to these emails. 
 
 **Disclaimer**: I have removed the identifying names of individuals from these datasets. Although these names can be obtained through the online public database, my intention here is not to shame individuals for making a high salary. Many of the individuals included in this dataset are exceptionally well-trained, with many years experience, and high degrees of certification. My point in using this data is for a comparison to determine if there is a disparity in the treatment of CUPE3903 members relative to other areas. 
@@ -47,6 +49,7 @@ text.lab <- paste("Avg Salary Increase",per.change,"%")
 ggplot(data=mean.paid, aes(x=Calendar.Year, y=salary, size=n)) + geom_point() + theme_Publication() + ylab("Annual Salary (CAD)") + xlab("Year") + annotate("text", x= 2,y=155000, label=text.lab, size=6)
 
 ```
+
 Over a five-year period, the average salary for employees at York University earning over 100,000 dollars increased 1.98%. Although this number may appear smaller relative to the amount York is offering CUPE3903 members (i.e. 2.1%), there is an increase in the number of individuals that earn over 100,000 (5% over the same time period). The individuals who crossed the threshold of 100,000 are essentially lowering the average salary change and thus 1.98% is a conservative estimate. Let's remember too that during this same period of 2014-2016, CUPE3903 members received ~1.48% increase - [collective agreement](https://3903.cupe.ca/files/2012/03/92365-1-YU-Unit-1.pdf). Let's also keep in perspective that a 1.98% increase for someone who is earning over 100,000 dollars means something much different than for the many graduate students that live below the poverty line.
 
 But wait! The individuals within this comparison represent much of our teaching staff, lecturers, librarians, and the many different forms of adminstrative suport that we have. What about our upper administration, such as the executives, VPs, presidents, and provost positions? Surely as the decision makers of our University their own salary increases would match those they expect of their employees. Let's take a look
