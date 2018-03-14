@@ -14,7 +14,7 @@ output:
 
 
 ### load data and libraries
-```{r}
+```{r warning=FALSE, message=FALSE}
 ## load libraries
 library(tidyverse)
 library(readr)
@@ -33,12 +33,59 @@ data[,"Salary.Paid"] <- parse_number(data$Salary.Paid) ## convert dollarsigns to
 data[,"Calendar.Year"] <- as.factor(data$Calendar.Year) ## convert year to a factor
 ```
 
-### Average Salary last 5 years
-```{r}
+### Average Salary for the last 5 years
+```{r warning=FALSE, message=FALSE}
+## Calculate average salaries over the last 5 years
+mean.paid <- data %>% group_by(Calendar.Year) %>% summarize(salary=mean(Salary.Paid), n=length(Salary.Paid))
 
-mean.paid <- data %>% group_by(Calendar.Year) %>% summarize(salary=mean(Salary.Paid))
+## calculate average percent increase in salary
+per.change <- round(mean(diff(mean.paid$salary)/mean.paid$salary*100),2)
+text.lab <- paste("Avg Salary Increase",per.change,"%")
 
-ggplot(data=mean.paid, aes(x=Calendar.Year, y=salary)) + geom_point() +  stat_smooth(method="lm", formula= y~x,aes(x=Calendar.Year, y=salary), color="#56B4E9", fill="#56B4E970")
+ggplot(data=mean.paid, aes(x=Calendar.Year, y=salary, size=n)) + geom_point() + theme_Publication() + ylab("Annual Salary (CAD)") + xlab("Year") + annotate("text", x= 2,y=155000, label=text.lab, size=6)
+
+```
+Over a five-year period, the average salary for employees at York University earning over 100,000 dollars increased 1.98%. Although this number may appear smaller relative to the amount York is offering CUPE3903 members (i.e. 2.1%), there is an increase in the number of individuals that earn over 100,000 (5% over the same time period). The individuals who crossed the threshold of 100,000 are essentially lowering the average salary change and thus 1.98% is a conservative estimate. Let's remember too that during this same period of 2014-2016, CUPE3903 members received ~1.48% increase - [collective agreement](https://3903.cupe.ca/files/2012/03/92365-1-YU-Unit-1.pdf). Let's also keep in perspective that a 1.98% increase for someone who is earning over 100,000 dollars means something much different than for the many graduate students that live below the poverty line.
+
+But wait! The individuals within this comparison represent much of our teaching staff, lecturers, librarians, and the many different forms of adminstrative suport that we have. What about our upper administration, such as the executives, VPs, presidents, and provost positions? Surely as the decision makers of our University their own salary increases would match those they expect of their employees. Let's take a look
+
+### Upper-administration salary change
+```{r warning=FALSE, message=FALSE}
+## identify rows that are not teaching staff, professors, lower management, engineers, or technicians
+exec <- as.numeric(rownames(data[grep("Executive", data$Job.Title), ])) ## executives, CEO, CTO, etc...
+pres <- as.numeric(rownames(data[grep("President", data$Job.Title), ])) ## presidents and vice-presidents for each division
+prov <- as.numeric(rownames(data[grep("Provost", data$Job.Title), ])) ## provost & vice-provost positions
+
+## combine into a list
+upperadmin <- c(exec,pres,prov)
+
+## remove from data to be upper-admin positions only
+admin <- data[upperadmin,]
+
+## Calculate average salaries over the last 5 years
+mean.paid <- admin %>% group_by(Calendar.Year) %>% summarize(salary=mean(Salary.Paid, n=length(Salary.Paid)))
 
 
-data[grep("Professor", data$Job.Title), ]
+## calculate average percent increase in salary
+per.change <- round(mean(diff(mean.paid$salary)/mean.paid$salary*100),2)
+text.lab <- paste("Avg Salary Increase",per.change,"%")
+
+ggplot(data=mean.paid, aes(x=Calendar.Year, y=salary)) + geom_point(size=5) + theme_Publication() + ylab("Annual Salary (CAD)") + xlab("Year") + annotate("text", x= 2,y=170000, label=text.lab, size=6)
+```
+
+Interesting. Some of the highest salaried individuals at the University, many of those that are the decision makers, have also the highest percent increase in salary. 
+
+### Putting things into perspective
+
+This strike has not been about salary. The Union has multiple proposals, such as equality in the workplace, that essentially cost the University zero dollars to implement, but are still met with pushback. The Union has revised many of the proposals to try and meet the University in the middle, but instead the University chooses to broadcast emails highlting the best of their proposals now and the most-costly of the Union's proposals 6 months ago. I believe this stike is about many things, but if I had to pick three major themes, it would be consistency in pay throughout the year for Unit 1, conversion to full-time faculty for Unit 2, and the union-busting of Unit 3. I would request, as many others have, that the University return to the bargainning table with a more realistic expectations and stop with the distorting the truth. 
+
+### Want some more stats?
+
+- The endowment fund by the University receives a rate of return of 7.7% [AIR](http://secretariat.info.yorku.ca/files/Annual-Investment-Report-December-31-2016.pdf)
+- Yorks Enrollment has decreased in the last 5 years while other schools in the province have increased. Perhaps from treatment of its students? [Enrollment figures](http://cou.on.ca/wp-content/uploads/2018/02/Table-3-Headcount-enrolment-by-institution-and-level-of-study.pdf)
+- York's Revenue has increased on average 3.21% each year in the last five years. The difference between the revenue and expenses has also widened, to a maximum of 37 million profit in 2017 [YorkU Finance Statements](http://www.yorku.ca/finance/documents/Financial_Statements_April_30_2017.pdf)
+```{r warning=FALSE, message=FALSE}
+rev.exp <- data.frame(year=c(2017,2016,2015,2014,2013,2017,2016,2015,2014,2013),dollars = c(1095.1,1041.2,1017.0,1016.9,983.1,1058.7,1017.9,997.1,1012.6,985.9), type=c(rep("revenue",5),rep("expenses",5)))
+
+ggplot(data=rev.exp, aes(x=year, y=dollars, fill=type, color=type)) + geom_point(size=4) +theme_Publication() + ylab("Millions of Dollars (CAD)")
+```
